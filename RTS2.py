@@ -22,17 +22,20 @@ def dft(values):
     return np.dot(w, values)
 
 def fft(values):
+    start = time.time()
+    time.sleep(1)
     signal = np.asarray(values, dtype=float)
     N = len(signal)
+    end = time.time() - start - 1
     if N <= 2:
-        return dft(signal)
+        return dft(signal), end
     else:
         signal_even = fft(signal[::2])
         signal_odd = fft(signal[1::2])
         terms = np.exp(-2j * np.pi * np.arange(N) / N)
         return np.concatenate([signal_even + terms[:N // 2] * signal_odd,
                                signal_even + terms[N // 2:] * signal_odd])
-
+fft_time=fft(values)
 signal = generate_random_signal(1100, 12)
 t = np.linspace(0, 5, 64)
 x = signal(t)
@@ -45,6 +48,8 @@ x_fft_re = x_fft.real
 x_fft_im = x_fft.imag
 
 _, (chart_signal, chart_DFT, chart_FFT) = plt.subplots(3, 1, figsize=(20, 20))
+
+print (fft_time)
 
 chart_signal.set_title("Random signal")
 chart_signal.plot(t, x, 'k')
